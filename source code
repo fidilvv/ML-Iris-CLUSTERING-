@@ -1,0 +1,39 @@
+import pandas as pd
+from sklearn import datasets
+
+# Load the Iris dataset
+iris = datasets.load_iris()
+iris_data = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+
+# Drop the species column (not included in the dataset since we're clustering)
+# In this case, the species column is not needed since we're using only the features.
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+
+# Applying KMeans
+kmeans = KMeans(n_clusters=3, random_state=0)
+iris_data['KMeans_Cluster'] = kmeans.fit_predict(iris_data)
+
+# Visualizing KMeans Clusters
+plt.figure(figsize=(8, 6))
+plt.scatter(iris_data.iloc[:, 0], iris_data.iloc[:, 1], c=iris_data['KMeans_Cluster'], cmap='viridis', marker='o')
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=300, c='red', marker='X')  # Centroids
+plt.title('KMeans Clustering on Iris Dataset')
+plt.xlabel(iris.feature_names[0])
+plt.ylabel(iris.feature_names[1])
+plt.show()
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+# Apply Agglomerative Clustering
+hierarchical = AgglomerativeClustering(n_clusters=3)
+iris_data['Hierarchical_Cluster'] = hierarchical.fit_predict(iris_data)
+
+# Visualizing Hierarchical Clusters
+linked = linkage(iris_data, 'ward')
+plt.figure(figsize=(10, 7))
+dendrogram(linked, orientation='top', labels=iris_data.index)
+plt.title('Hierarchical Clustering Dendrogram')
+plt.xlabel('Iris Data Points')
+plt.ylabel('Euclidean distances')
+plt.show()
